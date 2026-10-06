@@ -1,4 +1,4 @@
-import os, json, time, uuid, base64, subprocess, threading, pathlib
+import os, json, time, uuid, base64, subprocess, threading, pathlib, tempfile
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 from pymongo import MongoClient
@@ -12,7 +12,7 @@ db = MongoClient(os.environ["MONGODB_URI"])[os.environ.get("MONGODB_DB", "voicel
 fs = gridfs.GridFS(db)
 KUSER = os.environ["KAGGLE_USERNAME"]
 SLUG = f"{KUSER}/voicelab-tts"
-WORK = pathlib.Path(__file__).parent / "jobs"; WORK.mkdir(exist_ok=True)
+WORK = pathlib.Path(tempfile.gettempdir()) / "voicelab_jobs"; WORK.mkdir(exist_ok=True)
 TEMPLATE = (pathlib.Path(__file__).parent / "kernel_template.py").read_text()
 LOCK = threading.Lock()  # one clip at a time
 MAX_REF_SECONDS = 12
